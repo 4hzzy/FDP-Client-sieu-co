@@ -4,13 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="99288a84-57ed-49bf-9117-5fa59c227563" name="Changes" comment="" />
+    <list default="true" id="db47ea8a-10ac-4fba-a50b-80d44b351153" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/FDPClient.api.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FDPClient.iml" beforeDir="false" afterPath="$PROJECT_DIR$/FDPClient.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FDPClient.ipr" beforeDir="false" afterPath="$PROJECT_DIR$/FDPClient.ipr" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FDPClient.iws" beforeDir="false" afterPath="$PROJECT_DIR$/FDPClient.iws" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FDPClient.main.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/FDPClient.test.iml" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
     <option name="REVERSE_PATCH" value="false" />
@@ -59,31 +65,26 @@
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
       <state>
-        <task path="$PROJECT_DIR$">
-          <activation />
-        </task>
         <projects_view>
           <tree_state>
-            <expand>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="FDPClient" type="f1a62948:ProjectNode" />
-              </path>
-            </expand>
+            <expand />
             <select />
           </tree_state>
         </projects_view>
       </state>
     </system>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ModuleEditorState">
     <option name="LAST_EDITED_MODULE_NAME" />
     <option name="LAST_EDITED_TAB_NAME" />
   </component>
-  <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 6
-}</component>
-  <component name="ProjectId" id="39hwVXkpP5Jjzq9HHJHuVuviGxv" />
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 3
+}]]></component>
+  <component name="ProjectId" id="39pqgQtkfZ0XchOZM9A1FSAugdo" />
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
       <profile-state />
@@ -99,13 +100,15 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Application.Minecraft Client.executor": "Debug",
-    "Gradle.FDP540 [:GradleStart.main()].executor": "Run",
+    "Gradle.Build FDP540.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "kotlin-language-version-configured": "true",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle"
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true"
+  },
+  "keyToStringList": {
+    "kotlin-gradle-user-dirs": [
+      "C:\\Users\\Admin\\.gradle"
+    ]
   }
 }]]></component>
   <component name="RunManager" selected="Application.Minecraft Client">
@@ -139,6 +142,21 @@
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
+    </configuration>
+    <configuration default="false" factoryName="Application" name="Minecraft Client" type="Application">
+      <extension enabled="false" name="coverage" runner="idea" sample_coverage="true" />
+      <option name="MAIN_CLASS_NAME" value="GradleStart" />
+      <option name="VM_PARAMETERS" value="-Dfml.coreMods.load=net.ccbluex.liquidbounce.injection.forge.TransformerLoader -Xmx1024m -Xms1024m -Ddev-mode" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/../FDP540\run" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" value="" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="FDPClient.main" />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
     </configuration>
     <configuration default="false" factoryName="Application" name="Minecraft Client" type="Application">
       <extension enabled="false" name="coverage" runner="idea" sample_coverage="true" />
@@ -210,6 +228,21 @@
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Run" />
     </configuration>
+    <configuration default="false" factoryName="Application" name="Minecraft Server" type="Application">
+      <extension enabled="false" name="coverage" runner="idea" sample_coverage="true" />
+      <option name="MAIN_CLASS_NAME" value="GradleStartServer" />
+      <option name="VM_PARAMETERS" value="" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/../FDP540\run" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" value="" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="FDPClient.main" />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+    </configuration>
     <configuration default="true" type="Application" factoryName="Application">
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <method v="2">
@@ -226,6 +259,19 @@
       </option>
       <method v="2">
         <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="FDPClient" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="FDPClient" />
+      <option name="filePath" />
+      <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
@@ -258,11 +304,11 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="99288a84-57ed-49bf-9117-5fa59c227563" name="Changes" comment="" />
-      <created>1771161637863</created>
+      <changelist id="db47ea8a-10ac-4fba-a50b-80d44b351153" name="Changes" comment="" />
+      <created>1771403473702</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1771161637863</updated>
+      <updated>1771403473702</updated>
     </task>
     <servers />
   </component>

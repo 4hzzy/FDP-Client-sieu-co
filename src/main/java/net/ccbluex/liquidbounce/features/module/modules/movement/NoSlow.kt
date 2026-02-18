@@ -70,8 +70,6 @@ object NoSlow : Module() {
         "None"
     ).displayable { sneakModifyValue.get() }
     private val sneakTimingValue = ListValue("SneakTiming", arrayOf("Pre", "Post"), "Pre").displayable { sneakModifyValue.get() }
-    private val sneakForwardMultiplier = FloatValue("SneakForwardMultiplier", 1.0F, 0.2F, 1.0F).displayable { sneakModifyValue.get() }
-    private val sneakStrafeMultiplier = FloatValue("SneakStrafeMultiplier", 1.0F, 0.2F, 1.0F).displayable { sneakModifyValue.get() }
 
     private val customOnGround = BoolValue("CustomOnGround", false).displayable { modeValue.equals("Custom") }
     private val customDelayValue = IntegerValue("CustomDelay", 60, 10, 200).displayable { modeValue.equals("Custom") }
@@ -312,9 +310,7 @@ object NoSlow : Module() {
         val heldItem = player.heldItem?.item
 
         if (isSneaking && sneakModifyValue.get()) {
-            event.forward = sneakForwardMultiplier.get()
-            event.strafe = sneakStrafeMultiplier.get()
-            return
+            event.sneak = true
         }
 
         event.forward = getMultiplier(heldItem, true)

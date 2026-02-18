@@ -9,6 +9,7 @@ import net.ccbluex.liquidbounce.features.module.modules.world.Scaffold
 import net.ccbluex.liquidbounce.utils.render.RenderUtils
 import net.ccbluex.liquidbounce.utils.timer.MSTimer
 import net.ccbluex.liquidbounce.features.value.*
+import net.ccbluex.liquidbounce.injection.implementations.IMixinEntityLivingBase
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.network.INetHandler
@@ -59,7 +60,9 @@ class BackTrack : Module() {
         val theWorld = mc.theWorld ?: return
         mc.netHandler ?: return
 
-        if (FDPClient.moduleManager[Scaffold::class.java]?.state == true || event.type == PacketEvent.Type.SEND) {
+        if (event.type == PacketEvent.Type.SEND) return
+
+        if (FDPClient.moduleManager[Scaffold::class.java]?.state == true) {
             flush()
             return
         }
@@ -73,7 +76,6 @@ class BackTrack : Module() {
                     entity.realPosZ += packet.func_149064_e().toDouble()
                 }
             }
-
             is S18PacketEntityTeleport -> {
                 val entity = theWorld.getEntityByID(packet.entityId)
                 if (entity is EntityLivingBase) {
@@ -82,12 +84,10 @@ class BackTrack : Module() {
                     entity.realPosZ = packet.z.toDouble()
                 }
             }
-
             is S08PacketPlayerPosLook -> {
                 flush()
                 return
             }
-
             is S13PacketDestroyEntities -> {
                 val targetId = target?.entityId ?: return
                 if (packet.entityIDs.any { it == targetId }) {
@@ -109,42 +109,13 @@ class BackTrack : Module() {
     fun onUpdate(event: GameLoopEvent) {
         val thePlayer = mc.thePlayer ?: return
         mc.theWorld ?: return
-
         val target = target ?: run { flush(); return }
 
-        if (!isTargetValid(target)) {
-            flush()
-            return
-        }
+        if (!active) return
 
-        val realX = target.realPosX / 32.0
-        val realY = target.realPosY / 32.0
-        val realZ = target.realPosZ / 32.0
-        val halfWidth = target.width / 2.0f
-        val eyes = thePlayer.getPositionEyes(1.0f)
+        val range = getRange(thePlayer.canEntityBeSeen(target))
 
-        val eyesToReal = distanceToBox(eyes, realX, realY, realZ, halfWidth, target.height)
-        val eyesToServer = distanceToBox(
-            eyes,
-            target.serverPosX / 32.0,
-            target.serverPosY / 32.0,
-            target.serverPosZ / 32.0,
-            halfWidth,
-            target.height
-        )
-
-        var range = maxRangeValue.get().toDouble()
-        if (!thePlayer.canEntityBeSeen(target)) {
-            range = range.coerceAtMost(3.0)
-        }
-
-        if (eyesToReal > eyesToServer) {
-            active = true
-        }
-
-        if (!active
-            || eyesToReal <= eyesToServer
-            || thePlayer.getDistance(realX, realY, realZ) >= range
+        if (thePlayer.getDistance(target.realPosX / 32.0, target.realPosY / 32.0, target.realPosZ / 32.0) >= range
             || timer.hasTimePassed(delayValue.get().toLong())
         ) {
             flush()
@@ -154,36 +125,13 @@ class BackTrack : Module() {
     @EventTarget
     fun onRender3D(event: Render3DEvent) {
         if (!espValue.get()) return
-
         val target = target ?: return
         if (target == mc.thePlayer || target.isInvisible || packets.isEmpty()) return
-
         drawBox(target, target.realPosX / 32.0, target.realPosY / 32.0, target.realPosZ / 32.0)
-    }
-
-    private fun distanceToBox(eyes: Vec3, x: Double, y: Double, z: Double, halfWidth: Float, height: Float): Double {
-        val hw = halfWidth.toDouble()
-        val h = height.toDouble()
-        return eyes.distanceTo(
-            Vec3(
-                MathHelper.clamp_double(eyes.xCoord, x - hw, x + hw),
-                MathHelper.clamp_double(eyes.yCoord, y, y + h),
-                MathHelper.clamp_double(eyes.zCoord, z - hw, z + hw)
-            )
-        )
-    }
-
-    private fun isTargetValid(entity: EntityLivingBase): Boolean {
-        return entity.realPosX != 0.0
-                && entity.realPosY != 0.0
-                && entity.realPosZ != 0.0
-                && entity.width != 0f
-                && entity.height != 0f
     }
 
     private fun tryDelayPacket(event: PacketEvent) {
         val packet = event.packet
-
         if (packet::class.java in WHITELISTED_PACKETS) return
 
         val shouldFreeze = when (packet) {
@@ -192,7 +140,30 @@ class BackTrack : Module() {
             else -> true
         }
 
-        if (shouldFreeze && active) {
+        if (!shouldFreeze) return
+
+        val target = target ?: return
+        val thePlayer = mc.thePlayer ?: return
+
+        val eyes = thePlayer.getPositionEyes(1.0f)
+        val halfWidth = target.width / 2.0f
+        val range = getRange(thePlayer.canEntityBeSeen(target))
+
+        val eyesToReal = distanceToBox(eyes, target.realPosX / 32.0, target.realPosY / 32.0, target.realPosZ / 32.0, halfWidth, target.height)
+        val eyesToClient = distanceToBox(eyes, target.posX, target.posY, target.posZ, halfWidth, target.height)
+
+        if (eyesToClient < eyesToReal && eyesToClient < range && !active) {
+            active = true
+            timer.reset()
+        }
+
+        if (timer.hasTimePassed(delayValue.get().toLong()) || thePlayer.getDistance(target.realPosX / 32.0, target.realPosY / 32.0, target.realPosZ / 32.0) >= range
+        ) {
+            flush()
+            return
+        }
+
+        if (active) {
             synchronized(packets) { packets.add(packet) }
             event.cancelEvent()
         }
@@ -207,7 +178,6 @@ class BackTrack : Module() {
             }
 
             val handler = mc.netHandler?.networkManager?.netHandler
-
             if (handler == null) {
                 packets.clear()
                 active = false
@@ -219,8 +189,7 @@ class BackTrack : Module() {
                 try {
                     @Suppress("UNCHECKED_CAST")
                     (packet as Packet<INetHandler>).processPacket(handler)
-                } catch (_: Exception) {
-                }
+                } catch (_: Exception) {}
             }
 
             packets.clear()
@@ -236,13 +205,27 @@ class BackTrack : Module() {
         timer.reset()
     }
 
+    private fun getRange(canSee: Boolean): Double {
+        val range = maxRangeValue.get().toDouble()
+        return if (canSee) range else range.coerceAtMost(3.0)
+    }
+
+    private fun distanceToBox(eyes: Vec3, x: Double, y: Double, z: Double, halfWidth: Float, height: Float): Double {
+        return eyes.distanceTo(
+            Vec3(
+                MathHelper.clamp_double(eyes.xCoord, x - halfWidth, x + halfWidth),
+                MathHelper.clamp_double(eyes.yCoord, y, y + height),
+                MathHelper.clamp_double(eyes.zCoord, z - halfWidth, z + halfWidth)
+            )
+        )
+    }
+
     private fun drawBox(entity: EntityLivingBase, x: Double, y: Double, z: Double) {
         val rx = x - mc.renderManager.viewerPosX
         val ry = y - mc.renderManager.viewerPosY
         val rz = z - mc.renderManager.viewerPosZ
         val hw = entity.width / 2.0
         val h = entity.height.toDouble()
-
         val box = AxisAlignedBB(rx - hw, ry, rz - hw, rx + hw, ry + h, rz + hw)
         val color = Color(espRedValue.get(), espGreenValue.get(), espBlueValue.get(), espAlphaValue.get())
 
@@ -280,3 +263,22 @@ class BackTrack : Module() {
     override val tag: String
         get() = "${packets.size} | ${delayValue.get()}"
 }
+
+
+var EntityLivingBase.realPosX: Double
+    get() = (this as IMixinEntityLivingBase).realPosX
+    set(value) {
+        (this as IMixinEntityLivingBase).realPosX = value
+    }
+
+var EntityLivingBase.realPosY: Double
+    get() = (this as IMixinEntityLivingBase).realPosY
+    set(value) {
+        (this as IMixinEntityLivingBase).realPosY = value
+    }
+
+var EntityLivingBase.realPosZ: Double
+    get() = (this as IMixinEntityLivingBase).realPosZ
+    set(value) {
+        (this as IMixinEntityLivingBase).realPosZ = value
+    }

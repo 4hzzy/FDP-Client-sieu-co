@@ -14,6 +14,7 @@ import net.ccbluex.liquidbounce.features.module.modules.movement.Sprint;
 import net.ccbluex.liquidbounce.features.module.modules.movement.StrafeFix;
 import net.ccbluex.liquidbounce.features.module.modules.render.AntiBlind;
 import net.ccbluex.liquidbounce.features.module.modules.exploit.ViaVersionFix;
+import net.ccbluex.liquidbounce.injection.implementations.IMixinEntityLivingBase;
 import net.ccbluex.liquidbounce.utils.MovementUtils;
 import net.ccbluex.liquidbounce.utils.RotationUtils;
 import net.minecraft.block.Block;
@@ -29,6 +30,7 @@ import net.minecraft.util.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -39,7 +41,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Objects;
 
 @Mixin(EntityLivingBase.class)
-public abstract class MixinEntityLivingBase extends MixinEntity {
+public abstract class MixinEntityLivingBase extends MixinEntity implements IMixinEntityLivingBase {
 
     @Shadow
     protected boolean isJumping;
@@ -71,6 +73,7 @@ public abstract class MixinEntityLivingBase extends MixinEntity {
     @Shadow
     protected abstract void updateAITick();
 
+    @Unique
     private double realPosX;
 
     public double getRealPosX() {
@@ -81,6 +84,7 @@ public abstract class MixinEntityLivingBase extends MixinEntity {
         realPosX = x;
     }
 
+    @Unique
     private double realPosY;
 
     public double getRealPosY() {
@@ -91,6 +95,7 @@ public abstract class MixinEntityLivingBase extends MixinEntity {
         realPosY = y;
     }
 
+    @Unique
     private double realPosZ;
 
     public double getRealPosZ() {
@@ -110,9 +115,19 @@ public abstract class MixinEntityLivingBase extends MixinEntity {
     @Overwrite
     protected void jump() {
         if (!this.equals(Minecraft.getMinecraft().thePlayer)) {
+            this.motionY = (double) this.getJumpUpwardsMotion();
+            if (this.isPotionActive(Potion.jump)) {
+                this.motionY += (double) ((float) (this.getActivePotionEffect(Potion.jump).getAmplifier() + 1) * 0.1F);
+            }
+            if (this.isSprinting()) {
+                float f = this.rotationYaw * 0.017453292F;
+                this.motionX -= (double) (MathHelper.sin(f) * 0.2F);
+                this.motionZ += (double) (MathHelper.cos(f) * 0.2F);
+            }
+            this.isAirBorne = true;
             return;
         }
-        
+
         /**
          * Jump Process Fix
          * use updateFixState to reset Jump Fix state

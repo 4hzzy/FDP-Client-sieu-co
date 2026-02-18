@@ -130,7 +130,7 @@ class PreUpdateEvent : CancellableEvent()
  * @param strafe the applied strafe slow down
  * @param forward the applied forward slow down
  */
-class SlowDownEvent(var strafe: Float, var forward: Float) : Event()
+class SlowDownEvent(var strafe: Float, var forward: Float, var sneak: Boolean) : Event()
 
 /**
  * Called in "moveFlying"

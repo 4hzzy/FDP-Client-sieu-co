@@ -376,9 +376,15 @@ public abstract class MixinEntityPlayerSP extends MixinAbstractClientPlayer {
         isCurrentUsingItem = getHeldItem() != null && (this.isUsingItem() || (getHeldItem().getItem() instanceof ItemSword && killAura.getBlockingStatus())) && !this.isRiding();
         isCurrentUsingSword = getHeldItem() != null && getHeldItem().getItem() instanceof ItemSword && (killAura.getBlockingStatus() || this.isUsingItem());
 
+        final SlowDownEvent slowDownEvent = new SlowDownEvent(0.2F, 0.2F, false);
+        FDPClient.eventManager.callEvent(slowDownEvent);
+
+        if(slowDownEvent.getSneak() && this.isSneaking()){
+            this.movementInput.moveStrafe /= 0.3f;
+            this.movementInput.moveForward /= 0.3f;
+        }
+
         if (isCurrentUsingItem) {
-            final SlowDownEvent slowDownEvent = new SlowDownEvent(0.2F, 0.2F);
-            FDPClient.eventManager.callEvent(slowDownEvent);
             this.movementInput.moveStrafe *= slowDownEvent.getStrafe();
             this.movementInput.moveForward *= slowDownEvent.getForward();
         }
@@ -395,7 +401,7 @@ public abstract class MixinEntityPlayerSP extends MixinAbstractClientPlayer {
         }
         
         baseIsMoving = (sprint.getState() && sprint.getAllDirectionsValue().get() && (Math.abs(this.movementInput.moveForward) > 0.05f || Math.abs(this.movementInput.moveStrafe) > 0.05f)) || isSprintDirection;
-        baseSprintState = ((!sprint.getHungryValue().get() && sprint.getState()) || (float) this.getFoodStats().getFoodLevel() > 6.0F || this.capabilities.allowFlying) && baseIsMoving && (!this.isCollidedHorizontally || sprint.getCollideValue().get()) && (!this.isSneaking() || sprint.getSneakValue().get()) && !this.isPotionActive(Potion.blindness);
+        baseSprintState = ((!sprint.getHungryValue().get() && sprint.getState()) || (float) this.getFoodStats().getFoodLevel() > 6.0F || this.capabilities.allowFlying) && baseIsMoving && (!this.isCollidedHorizontally || sprint.getCollideValue().get()) && (!this.isSneaking() || sprint.getSneakValue().get() || slowDownEvent.getSneak()) && !this.isPotionActive(Potion.blindness);
         
         //Don't check current Sprint state cuz it's not updated in real time :bruh:
         

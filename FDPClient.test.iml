@@ -1,20 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module external.linked.project.id="FDPClient:test" external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$" external.system.id="GRADLE" external.system.module.group="org.unlegitmc.fdp" external.system.module.type="sourceSet" external.system.module.version="5.4.0" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
-    <facet type="minecraft" name="Minecraft">
-      <configuration>
-        <autoDetectTypes>
-          <platformType>MIXIN</platformType>
-          <platformType>FORGE</platformType>
-          <platformType>MCP</platformType>
-        </autoDetectTypes>
-        <projectReimportVersion>1</projectReimportVersion>
-      </configuration>
-    </facet>
     <facet external-system-id="GRADLE" type="kotlin-language" name="Kotlin">
-      <configuration version="5" platform="JVM 1.8" allPlatforms="JVM [1.8]" useProjectSettings="false" pureKotlinSourceFolders="C:\Users\bloxf\Downloads\FDPClient-5.4.0\FDP540\src\main\kotlin;C:\Users\bloxf\Downloads\FDPClient-5.4.0\FDP540\src\test\kotlin;C:\Users\bloxf\Downloads\FDPClient-5.4.0\FDP540\src\api\kotlin">
+      <configuration version="5" platform="JVM 1.8" allPlatforms="JVM [1.8]" useProjectSettings="false">
         <additionalVisibleModuleNames>FDPClient:main</additionalVisibleModuleNames>
-        <compilerSettings />
         <compilerArguments>
           <flagArguments>
             <flagArg name="allowNoSourceFiles" arg="true" />
@@ -50,9 +39,6 @@
         </compilerArguments>
       </configuration>
     </facet>
-  </component>
-  <component name="McpModuleSettings">
-    <option name="srgType" value="SRG" />
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
