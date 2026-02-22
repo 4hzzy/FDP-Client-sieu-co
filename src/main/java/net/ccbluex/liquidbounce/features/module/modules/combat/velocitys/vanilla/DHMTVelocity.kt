@@ -11,7 +11,7 @@ class DHMTVelocity : VelocityMode("DHMT") {
 
         if (packet is S12PacketEntityVelocity) {
             if (mc.thePlayer.onGround)
-            mc.thePlayer.motionY = packet.getMotionY() / 8000.0
+            mc.thePlayer.motionY = packet.getMotionY().toDouble() / 8000.0
             packet.motionX *= 0
             packet.motionZ *= 0
         }
