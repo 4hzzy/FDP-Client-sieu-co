@@ -6,7 +6,9 @@ import net.minecraft.network.play.server.S12PacketEntityVelocity
 
 class DHMTVelocity : VelocityMode("DHMT") {
     override fun onVelocityPacket(event: PacketEvent) {
+        mc.thePlayer ?: return
         val packet = event.packet
+
         if (packet is S12PacketEntityVelocity) {
             if (mc.thePlayer.onGround)
             mc.thePlayer.motionY = packet.getMotionY() / 8000.0
