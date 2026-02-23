@@ -8,11 +8,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           submodules: recursive
       - name: Java setup
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           distribution: "zulu"
           java-version: 8
@@ -25,7 +25,7 @@ jobs:
       - name: Rename build artifacts
         run: mv build/libs/FDPClient-*.jar build/libs/FDPClient-build.jar
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: FDPClient
           path: build/libs/FDPClient-build.jar
