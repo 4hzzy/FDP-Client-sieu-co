@@ -25,6 +25,7 @@ compileKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    destinationDir = compileJava.destinationDir
 }
 
 minecraft {
@@ -32,12 +33,22 @@ minecraft {
     runDir = "run"
     mappings = "stable_22"
     makeObfSourceJar = false
-    clientJvmArgs += ["-Dfml.coreMods.load=net.ccbluex.liquidbounce.injection.forge.TransformerLoader", "-Xmx1024m -Xms1024m", "-Ddev-mode"]
+    clientJvmArgs += ["-Dfml.coreMods.load=net.ccbluex.liquidbounce.injection.forge.TransformerLoader", "-Xmx1024m", "-Xms1024m", "-Ddev-mode"]
+}
+
+tasks.withType(JavaExec).configureEach {
+    classpath += sourceSets.main.output
+    if (name == "runClient") {
+        classpath += sourceSets.main.runtimeClasspath
+    }
 }
 
 configurations {
     include
     implementation.extendsFrom(include)
+    runtimeOnly {
+        canBeResolved = true
+    }
 }
 
 dependencies {
