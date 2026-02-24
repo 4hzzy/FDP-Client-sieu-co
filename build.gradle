@@ -58,7 +58,7 @@ dependencies {
     annotationProcessor("org.spongepowered:mixin:0.7.11-SNAPSHOT")
 
     include "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.21"
-    include("me.friwi:jcefmaven:100.0.14.2") {
+    include("me.friwi:jcefmaven:143.0.14") {
         exclude module: "commons-compress"
         exclude module: "jogl-all"
         exclude module: "gluegen-rt"
