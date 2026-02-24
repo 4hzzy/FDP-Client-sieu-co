@@ -1,7 +1,9 @@
+import net.minecraftforge.gradle.user.ReobfMappingType
+
 plugins {
     id "java"
     id "idea"
-    id "org.jetbrains.kotlin.jvm"
+    id "org.jetbrains.kotlin.jvm" version "2.0.21"
     id "com.github.johnrengelman.shadow" version "6.1.0"
     id "net.minecraftforge.gradle.forge"
     id "org.spongepowered.mixin"
@@ -21,13 +23,6 @@ archivesBaseName = "FDPClient"
 sourceCompatibility = targetCompatibility = 1.8
 compileJava.options.encoding = "UTF-8"
 
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-    destinationDir = compileJava.destinationDir
-}
-
 minecraft {
     version = "1.8.9-11.15.1.2318-1.8.9"
     runDir = "run"
@@ -38,9 +33,6 @@ minecraft {
 
 tasks.withType(JavaExec).configureEach {
     classpath += sourceSets.main.output
-    if (name == "runClient") {
-        classpath += sourceSets.main.runtimeClasspath
-    }
 }
 
 configurations {
@@ -65,11 +57,11 @@ dependencies {
 
     annotationProcessor("org.spongepowered:mixin:0.7.11-SNAPSHOT")
 
-    include "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    include("me.friwi:jcefmaven:$jcef_version") {
-        exclude module: "commons-compress" // minecraft have a old version of this library
-        exclude module: "jogl-all" // we use lwjgl
-        exclude module: "gluegen-rt" // this is the library for joal
+    include "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.21"
+    include("me.friwi:jcefmaven:100.0.14.2") {
+        exclude module: "commons-compress"
+        exclude module: "jogl-all"
+        exclude module: "gluegen-rt"
     }
     include("com.jagrosh:DiscordIPC:0.4")
     include("com.github.SkidderMC:elixir-2:1.2.4") {
@@ -82,49 +74,47 @@ dependencies {
         exclude module: "logback-core"
         exclude module: "logback-classic"
         exclude module: "junit"
-    } // for read dynamic capes
+    }
 
-    include("com.github.UnlegitMC:Astar3d:bec2291cf2") // pathfinding
+    include("com.github.UnlegitMC:Astar3d:bec2291cf2")
 
-    include fileTree(include: ["*.jar"], dir: "libs")
+    include(fileTree(include: ["*.jar"], dir: "libs"))
 }
 
 shadowJar {
     archiveClassifier.set("")
     configurations = [project.configurations.include]
-    duplicatesStrategy DuplicatesStrategy.EXCLUDE
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-    // Ultralight native files are going to be downloaded from our cloud
-    exclude "native-binaries/**"
-
-    exclude "LICENSE.txt"
-
-    exclude "META-INF/maven/**"
-    exclude "META-INF/versions/**"
-
-    exclude "org/apache/**"
-    exclude "org/junit/**"
+    exclude("native-binaries/**")
+    exclude("LICENSE.txt")
+    exclude("META-INF/maven/**")
+    exclude("META-INF/versions/**")
+    exclude("org/apache/**")
+    exclude("org/junit/**")
 }
 
 processResources {
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
+    inputs.property("version", project.version)
+    inputs.property("mcversion", minecraft.version)
 
     filesMatching("mcmod.info") {
-        expand "version": project.version, "mcversion": project.minecraft.version
+        expand("version": project.version, "mcversion": project.minecraft.version)
     }
 
-    rename "(.+_at.cfg)", "META-INF/\$1"
+    rename("(.+_at.cfg)", "META-INF/\$1")
 }
 
-task moveResources {
+tasks.register("moveResources") {
     doLast {
-        ant.move file: "${buildDir}/resources/main",
+        ant.move(
+                file: "${buildDir}/resources/main",
                 todir: "${buildDir}/classes/java"
+        )
     }
+    dependsOn(processResources)
 }
 
-moveResources.dependsOn(processResources)
 classes.dependsOn(moveResources)
 
 jar {
@@ -144,13 +134,13 @@ jar {
 
 mixin {
     disableRefMapWarning = true
-    defaultObfuscationEnv searge
-    add sourceSets.main, "mixins.fdpclient.refmap.json"
+    defaultObfuscationEnv = searge
+    add(sourceSets.main, "mixins.fdpclient.refmap.json")
 }
 
 reobf {
     shadowJar {
-        mappingType = "SEARGE"
+        mappingType = ReobfMappingType.SEARGE
     }
 }
 tasks.reobfJar.dependsOn(shadowJar)

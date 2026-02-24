@@ -10,17 +10,13 @@ pluginManagement {
 		eachPlugin {
 			switch (requested.id.id) {
 				case "net.minecraftforge.gradle.forge":
-					useModule("com.github.ccbluex:ForgeGradle:${forgegradle_version}")
+					useModule("com.github.gatooooooo:ForgeGradle:f2c5bb338e")
 					break
 				case "org.spongepowered.mixin":
-					useModule("com.github.xcfrg:mixingradle:${mixingradle_version}")
+					useModule("com.github.xcfrg:mixingradle:ae2a80e")
 					break
 			}
 		}
-	}
-	plugins {
-		id "org.jetbrains.kotlin.jvm" version kotlin_version
-		id "io.gitlab.arturbosch.detekt" version detekt_version
 	}
 }
 
